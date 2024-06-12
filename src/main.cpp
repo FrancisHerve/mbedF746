@@ -93,12 +93,16 @@ void moveServoTo90AndBack(PwmOut &servoPin, lv_obj_t *label) {
 
 // Fonction de test pour le premier bouton LVGL
 static void btn_event_cb1(lv_event_t *e) {
-    moveServo_ouv(servoPin1, servo1_label); // Faire bouger le servomoteur 1 de 0 à 180 degrés et vice-versa
+    moveServo_ouv(servoPin1, servo1_label); // Faire bouger le servomoteur 1 de 0 à 180 degrés 
+    ThisThread::sleep_for(5000ms); // Attendre 5s
+    moveServo_fermer(servoPin1, servo1_label);// Faire bouger le servomoteur 1 de 180 à 0 degrés 
 }
 
 // Fonction de test pour le deuxième bouton LVGL
 static void btn_event_cb2(lv_event_t *e) {
-    moveServo_ouv(servoPin2, servo2_label); // Faire bouger le servomoteur 2 de 0 à 180 degrés et vice-versa
+    moveServo_ouv(servoPin2, servo2_label); // Faire bouger le servomoteur 2 de 0 à 180 degrés 
+    ThisThread::sleep_for(5000ms); // Attendre 5s 
+    moveServo_fermer(servoPin2, servo2_label);// Faire bouger le servomoteur 1 de 180 à 0 degrés 
 }
 
 // Fonction pour créer le premier bouton sur l'écran pour le premier servomoteur
@@ -151,22 +155,25 @@ int main() {
     lv_obj_align(servo2_label, LV_ALIGN_TOP_LEFT, 10, 30); // Aligner le label
     updateServoLabel(servo2_label, angle2); // Mettre à jour le label avec l'angle initial du servomoteur 2
 
-    // Créer et positionner les labels pour les capteurs
+    Créer et positionner d'un label pour le capteur1
     sensor1_label = lv_label_create(lv_scr_act());
     lv_obj_align(sensor1_label, LV_ALIGN_TOP_LEFT, 10, 50);
-    updateSensorLabel(sensor1_label, "Sensor 1: Initializing...");
+    updateSensorLabel(sensor1_label, "Sensor 1: 0");
 
+    Créer et positionner d'un label pour le capteur2
     sensor2_label = lv_label_create(lv_scr_act());
     lv_obj_align(sensor2_label, LV_ALIGN_TOP_LEFT, 10, 70);
-    updateSensorLabel(sensor2_label, "Sensor 2: Initializing...");
+    updateSensorLabel(sensor2_label, "Sensor 2: 0");
 
+    Créer et positionner d'un label pour le capteur3
     sensor3_label = lv_label_create(lv_scr_act());
     lv_obj_align(sensor3_label, LV_ALIGN_TOP_LEFT, 10, 90);
-    updateSensorLabel(sensor3_label, "Sensor 3: Initializing...");
+    updateSensorLabel(sensor3_label, "Sensor 3: 0");
 
+    Créer et positionner d'un label pour le capteur4
     sensor4_label = lv_label_create(lv_scr_act());
     lv_obj_align(sensor4_label, LV_ALIGN_TOP_LEFT, 10, 110);
-    updateSensorLabel(sensor4_label, "Sensor 4: Initializing...");
+    updateSensorLabel(sensor4_label, "Sensor 4: 0");
 
     // Créer les labels pour la détection des voitures
     car_detected_label = lv_label_create(lv_scr_act());
@@ -179,34 +186,68 @@ int main() {
 
     threadLvgl.unlock(); // Déverrouiller le thread LVGL pour permettre les mises à jour
 
-    while (true) {
-        // Lire les états des capteurs
-        int sensor1_state = sensor1.read();
-        int sensor2_state = sensor2.read();
-        int sensor3_state = sensor3.read();
-        int sensor4_state = sensor4.read();
-
-        // Mettre à jour les labels des capteurs avec leurs états actuels
-        updateSensorLabel(sensor1_label, sensor1_state ? "Sensor 1: HIGH" : "Sensor 1: LOW");
-        updateSensorLabel(sensor2_label, sensor2_state ? "Sensor 2: HIGH" : "Sensor 2: LOW");
-        updateSensorLabel(sensor3_label, sensor3_state ? "Sensor 3: HIGH" : "Sensor 3: LOW");
-        updateSensorLabel(sensor4_label, sensor4_state ? "Sensor 4: HIGH" : "Sensor 4: LOW");
-
-        // Détection de voiture pour les capteurs 1 et 2
-        if (sensor1_state) {
-            updateSensorLabel(car_detected_label, "Car detected: Yes");
-            moveServoTo90AndBack(servoPin1, servo1_label); // Bouger le servo à 90 degrés et revenir
+    while (1) {
+        // Détection de voiture par le capteur 1 
+        if (sensor1.read() == 0) {
+            updateSensorLabel(sensor1_label, "Sensor 1: 0");
+            updateSensorLabel(car_detected_label, "Voiture detectee");
         } else {
-            updateSensorLabel(car_detected_label, "Car detected: No");
+            updateSensorLabel(sensor1_label, "Sensor 1: 1");
+            updateSensorLabel(car_detected_label, "Voiture non detectee");
         }
 
-        if (sensor2_state) {
-            updateSensorLabel(car_detected_label2, "Car detected 2: Yes");
-            moveServoTo90AndBack(servoPin2, servo2_label); // Bouger le servo à 90 degrés et revenir
+        // Détection de voiture par le capteur 2
+        if (sensor2.read() == 0) {
+            updateSensorLabel(sensor2_label, "Sensor 2: 0");
+            updateSensorLabel(car_detected_label2, "Voiture detectee");
         } else {
-            updateSensorLabel(car_detected_label2, "Car detected 2: No");
+            updateSensorLabel(sensor2_label, "Sensor 2: 1");
+            updateSensorLabel(car_detected_label2, "Voiture non detectee");
+        }
+        // Mouvement du servo 1 par le capteur 4
+        if (sensor4.read() == 0) {
+            // Faire tourner le servomoteur de 0 à 180 degrés et vice-versa
+            moveServo(servoPin1, servo1_label);
+            // Revenir à la position d'origine
+            setServoAngle(servoPin1, 0);
+            updateServoLabel(servo1_label, 0);
         }
 
-        ThisThread::sleep_for(100ms); // Attendre 100 ms avant de vérifier les capteurs à nouveau
+        // Mouvement du servo 2 par les capteurs 3 
+        if (sensor3.read() == 0 ) {
+            moveServo(servoPin2, servo2_label);
+            // Revenir à la position d'origine
+            setServoAngle(servoPin2, 0);
+            updateServoLabel(servo2_label, 0);
+        }
+       
+
+        // Mettre à jour les labels des capteurs
+        if (sensor1.read() == 0) {
+            updateSensorLabel(sensor1_label, "Sensor 1: 0");
+        } else {
+            updateSensorLabel(sensor1_label, "Sensor 1: 1");
+        }
+        
+        if (sensor2.read() == 0) {
+            updateSensorLabel(sensor2_label, "Sensor 2: 0");
+        } else {
+            updateSensorLabel(sensor2_label, "Sensor 2: 1");
+        }
+
+        if (sensor3.read() == 0) {
+            updateSensorLabel(sensor3_label, "Sensor 3: 0");
+        } else {
+            updateSensorLabel(sensor3_label, "Sensor 3: 1");
+        }
+
+        if (sensor4.read() == 0) {
+            updateSensorLabel(sensor4_label, "Sensor 4: 0");
+        } else {
+            updateSensorLabel(sensor4_label, "Sensor 4: 1");
+        }
+
+        // Boucle principale
+        ThisThread::sleep_for(20ms);
     }
 }
