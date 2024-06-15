@@ -66,7 +66,7 @@ void updateSensorLabel(lv_obj_t *label, const char* text) {
     lv_label_set_text(label, text);
 }
 
-// Fonction pour faire bouger le servo de 0 à 180 degrés et vice-versa
+// Fonction pour faire bouger le servo de 0 à 180 degrés 
 void moveServo_ouvert(PwmOut &servoPin, lv_obj_t *label) {
     for (int pos = 0; pos <= 180; pos += 1) { // Boucle pour faire tourner le servo de 0 à 180 degrés
         setServoAngle(servoPin, pos); // Définir l'angle du servo
@@ -74,6 +74,7 @@ void moveServo_ouvert(PwmOut &servoPin, lv_obj_t *label) {
         updateServoLabel(label, pos); // Mettre à jour le label avec l'angle actuel
     }
 }    
+// Fonction pour faire bouger le servo de 180 à 0 degrés
 void moveServo_fermer(PwmOut &servoPin, lv_obj_t *label){
     for (int pos = 180; pos >= 0; pos -= 1) { // Boucle pour faire tourner le servo de 180 à 0 degrés
         setServoAngle(servoPin, pos); // Définir l'angle du servo
@@ -241,7 +242,7 @@ while (1) {
 
  // Mouvement de fermeture de barrière du servo 2 si absence de détection sur les capteur 3 et 2
     else if ((sensor3.read() && sensor2.read()  == 1) {// Si le capteur 3 et 2 sont désactivés (signal à 1)
-        moveServo_ouvert(servoPin2, servo2_label);// Faire tourner le servomoteur 2 de 180 à 0 degrés
+        moveServo_fermer(servoPin2, servo2_label);// Faire tourner le servomoteur 2 de 180 à 0 degrés
         setServoAngle(servoPin2, 0);// Revenir à la position d'origine
         updateServoLabel(servo2_label, 0); // Mettre à jour le label du servomoteur 2
     }
