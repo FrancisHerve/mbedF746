@@ -217,20 +217,36 @@ while (1) {
 
     /**Mouvement du servo 1 et servo 2 lors de la détection des capteurs 4 et 3**/ 
 
-    // Mouvement du servo 1 par le capteur 4
+    // Mouvement d'ouverture de barrière du servo 1 si détection sur le capteur 4
     if (sensor4.read() == 0) {// Si le capteur 4 est activé (signal à 0)
-        moveServo(servoPin1, servo1_label);// Faire tourner le servomoteur 1 de 0 à 180 degrés
+        moveServo_ouvert(servoPin1, servo1_label);// Faire tourner le servomoteur 1 de 0 à 180 degrés
         setServoAngle(servoPin1, 0);// Revenir à la position d'origine
         updateServoLabel(servo1_label, 0); // Mettre à jour le label du servomoteur 1
     }
 
-    // Mouvement du servo 2 par le capteur 3
-    if (sensor3.read() == 0) {// Si le capteur 3 est activé (signal à 0)
-        moveServo(servoPin2, servo2_label);// Faire tourner le servomoteur 2 de 0 à 180 degrés
+// Mouvement de fermeture de barrière du servo 1 si absence de détection sur les capteur 4 et 1
+    else if ((sensor4.read() && sensor1.read()  == 1) {// Si le capteur 4  et 1 sont désactivés (signal à 1)
+        moveServo_fermer(servoPin1, servo1_label);// Faire tourner le servomoteur 1 de 180 à 0 degrés
+        setServoAngle(servoPin1, 0);// Revenir à la position d'origine
+        updateServoLabel(servo1_label, 0); // Mettre à jour le label du servomoteur 1
+    }
+    
+    // Mouvement d'ouverture de barrière du servo 2 si détection sur le capteur 3
+    if (sensor3.read()  == 0) {// Si le capteur 3 est activé (signal à 0)
+        moveServo_ouvert(servoPin2, servo2_label);// Faire tourner le servomoteur 2 de 0 à 180 degrés
         setServoAngle(servoPin2, 0);// Revenir à la position d'origine
         updateServoLabel(servo2_label, 0); // Mettre à jour le label du servomoteur 2
     }
 
+
+ // Mouvement de fermeture de barrière du servo 2 si absence de détection sur les capteur 3 et 2
+    else if ((sensor3.read() && sensor2.read()  == 1) {// Si le capteur 3 et 2 sont désactivés (signal à 1)
+        moveServo_ouvert(servoPin2, servo2_label);// Faire tourner le servomoteur 2 de 180 à 0 degrés
+        setServoAngle(servoPin2, 0);// Revenir à la position d'origine
+        updateServoLabel(servo2_label, 0); // Mettre à jour le label du servomoteur 2
+    }
+
+            
     /** Mettre à jour les labels des 4 capteurs**/
     
     if (sensor1.read() == 0) {
