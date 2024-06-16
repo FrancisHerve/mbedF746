@@ -46,15 +46,10 @@ float map(float x, float in_min, float in_max, float out_min, float out_max) {
 
 // Fonction pour définir l'angle du servo standard
 void setServoAngle(PwmOut &servoPin, int angle) {
-    float pulseWidth = map(angle, 0, 180, pulseMin, pulseMax);
+    float pulseWidth = map(angle, 0, 280, pulseMin, pulseMax);
     servoPin.pulsewidth(pulseWidth);
 }
 
-// Fonction pour définir l'angle du servomoteur FT90M
-void setServoAngleFT90M(PwmOut &servoPin, int angle) {
-    float pulseWidth = map(angle, 0, 280, FT90M_pulseMin, FT90M_pulseMax);
-    servoPin.pulsewidth(pulseWidth);
-}
 
 // Fonction pour mettre à jour le label de position du servomoteur
 void updateServoLabel(lv_obj_t *label, int angle) {
@@ -131,10 +126,10 @@ void create_button2() {
 int main() {
     // Initialiser les signaux PWM pour les servomoteurs
     servoPin1.period_ms(SERVO_PERIOD_MS); // Définir la période PWM pour le servomoteur 1
-    setServoAngleFT90M(servoPin1, 0); // Position initiale du servomoteur FT90M à 0 degré
+    setServoAngle(servoPin1, 0); // Position initiale du servomoteur FT90M à 0 degré
 
     servoPin2.period_ms(SERVO_PERIOD_MS); // Définir la période PWM pour le servomoteur 2
-    setServoAngleFT90M(servoPin2, 0); // Position initiale du servomoteur FT90M à 0 degré
+    setServoAngle(servoPin2, 0); // Position initiale du servomoteur FT90M à 0 degré
 
     // Attendre un moment pour assurer la stabilité des servos
     ThisThread::sleep_for(500ms); // Attendre 500 ms
