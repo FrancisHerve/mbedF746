@@ -94,14 +94,14 @@ void moveServoTo90AndBack(PwmOut &servoPin, lv_obj_t *label) {
 
 // Fonction de test pour le premier bouton LVGL
 static void btn_event_cb1(lv_event_t *e) {
-    moveServo_ouv(servoPin1, servo1_label); // Faire bouger le servomoteur 1 de 0 à 180 degrés 
+    moveServo_ouvert(servoPin1, servo1_label); // Faire bouger le servomoteur 1 de 0 à 180 degrés 
     ThisThread::sleep_for(5000ms); // Attendre 5s
     moveServo_fermer(servoPin1, servo1_label);// Faire bouger le servomoteur 1 de 180 à 0 degrés 
 }
 
 // Fonction de test pour le deuxième bouton LVGL
 static void btn_event_cb2(lv_event_t *e) {
-    moveServo_ouv(servoPin2, servo2_label); // Faire bouger le servomoteur 2 de 0 à 180 degrés 
+    moveServo_ouvert(servoPin2, servo2_label); // Faire bouger le servomoteur 2 de 0 à 180 degrés 
     ThisThread::sleep_for(5000ms); // Attendre 5s 
     moveServo_fermer(servoPin2, servo2_label);// Faire bouger le servomoteur 2 de 180 à 0 degrés 
 }
